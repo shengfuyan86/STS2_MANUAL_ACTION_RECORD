@@ -1,0 +1,12 @@
+{
+  "id": "STS2ManualActionRecorder",
+  "name": "STS2 Manual Action Recorder",
+  "author": "local",
+  "description": "Safe lifecycle recorder for Slay the Spire 2 manual action recording.",
+  "version": "0.1.0",
+  "has_pck": false,
+  "has_dll": true,
+  "min_game_version": "0.105.1",
+  "dependencies": [],
+  "affects_gameplay": false
+}

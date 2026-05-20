@@ -1,0 +1,26 @@
+# Dotfiles and dot-directories
+.*
+**/.*
+!.gitignore
+
+# Decompilation/reference snippets excluded from upload
+code/
+
+# Python/cache/build outputs
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+build/
+dist/
+*.egg-info/
+
+# .NET build outputs
+mod/**/bin/
+mod/**/obj/
+
+# Generated reports
+docs/stage0/reports/*.json
+docs/stage0/reports/*.md

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sts2-manual-action-record"
+version = "0.1.0"
+description = "Stage 0 tooling for trigger-based Slay the Spire 2 human action recording."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+sts2-record = "sts2_record.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
