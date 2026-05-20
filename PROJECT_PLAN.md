@@ -214,7 +214,8 @@ Python 部分放在当前项目中，负责离线处理，不直接参与游戏�
 ```text
 sts2_manual_action_record/
   pyproject.toml
-  README.md
+  README.md                 # user-facing install and usage guide
+  DEVELOPMENT.md            # developer workflow and implementation notes
   src/sts2_record/
     __init__.py
     config.py
