@@ -31,3 +31,11 @@ A row can be changed to `verified` only when all answers below are concrete:
 - [ ] Hover/drag/preview/cancel does not trigger final action event.
 - [ ] Payload fields are known and accessible.
 - [ ] User approves implementing this hook.
+
+## Card-play verification note
+
+`Hook.AfterCardPlayed` can only verify the card-play submit boundary: a card successfully reached the logic layer after cost/target/cancel checks. It is not enough to verify complete combat replay.
+
+Before promoting card-play recording beyond diagnostics, evidence must also show how card effects are captured for all character pools. The v0.105.1 snapshot includes many cards that mutate other cards or state: Silent draw/discard and Shiv generation, Defect status-card generation and orb/power triggers, Necrobinder Soul generation and summon/Osty state, Regent top-of-pile and transform effects, Ironclad exhaust/auto-play effects, plus Colorless/Event random and choice cards.
+
+A final card-play event should therefore include or be paired with state-before/state-after/diff evidence for hand, draw pile, discard pile, exhaust pile, card instances, creature state, powers, orbs, summons, choices, random results, and auto-play parent/child relationships.

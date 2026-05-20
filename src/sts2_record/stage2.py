@@ -28,6 +28,14 @@ STAGE2_GAMEPLAY_EVENTS = {
     "potion_used",
 }
 STAGE2_REQUIRED_PAYLOAD_FIELDS = {"hook", "action", "state_before", "state_after"}
+DIAGNOSTIC_CARD_PLAY_STATE_DIFF_REQUIRED_FIELDS = {
+    "source_card_play_seq",
+    "hook_window",
+    "card_play",
+    "state_before",
+    "state_after",
+    "diff",
+}
 AREA_HINT_MAP = {
     "combat_lifecycle": ("combat", "turn"),
     "end_turn": ("turn",),
@@ -119,6 +127,15 @@ def validate_stage2_events_from_file(path: Path) -> dict[str, Any]:
     errors = list(base["errors"])
     for index, event in enumerate(events, start=1):
         event_type = event.get("event_type")
+        if event_type == "diagnostic_card_play_state_diff":
+            payload = event.get("payload")
+            if not isinstance(payload, dict):
+                errors.append(f"event {index}: diagnostic card-play state diff payload must be an object")
+                continue
+            missing = sorted(DIAGNOSTIC_CARD_PLAY_STATE_DIFF_REQUIRED_FIELDS - set(payload))
+            if missing:
+                errors.append(f"event {index}: diagnostic card-play state diff missing payload fields {missing}")
+            continue
         if event_type not in STAGE2_GAMEPLAY_EVENTS:
             continue
         payload = event.get("payload")

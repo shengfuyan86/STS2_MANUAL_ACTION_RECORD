@@ -79,7 +79,7 @@
       "positive_test": "",
       "negative_test": "",
       "payload_fields": [],
-      "status": "unverified",
+      "status": "candidate",
       "static_hints": [
         "%MultiplayerCards",
         "(res://src/Core/Nodes/Combat/NCardPlay.cs",
@@ -94,7 +94,7 @@
         "1MegaCrit.Sts2.Core.Models.Cards.Bash+<OnPlay>d__5",
         "1MegaCrit.Sts2.Core.Models.Cards.Blur+<OnPlay>d__6"
       ],
-      "notes": "Static hints are search leads only; do not implement a hook from this row until status is verified."
+      "notes": "Hook.AfterCardPlayed diagnostic bridge exists for smoke testing successful card-play submit semantics only. Do not promote card-play recording beyond diagnostics until manual play, cancel, invalid target, unplayable, auto-play behavior, and state-diff coverage for hand/pile/card-instance/entity changes are characterized."
     },
     {
       "area": "potion_use",

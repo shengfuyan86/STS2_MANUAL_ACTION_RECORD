@@ -116,3 +116,37 @@ def test_stage2_gameplay_event_accepts_verified_shape(tmp_path: Path) -> None:
     result = validate_stage2_events_from_file(events)
 
     assert result["ok"] is True
+
+
+def test_diagnostic_card_play_state_diff_accepts_diagnostic_shape(tmp_path: Path) -> None:
+    events = tmp_path / "events.ndjson"
+    write_event_file(
+        events,
+        [
+            base_event(
+                "diagnostic_card_play_state_diff",
+                {
+                    "source_card_play_seq": 1,
+                    "hook_window": {},
+                    "card_play": {},
+                    "state_before": {"players": [], "creatures": []},
+                    "state_after": {"players": [], "creatures": []},
+                    "diff": {},
+                },
+            )
+        ],
+    )
+
+    result = validate_stage2_events_from_file(events)
+
+    assert result["ok"] is True
+
+
+def test_diagnostic_card_play_state_diff_requires_minimum_payload(tmp_path: Path) -> None:
+    events = tmp_path / "events.ndjson"
+    write_event_file(events, [base_event("diagnostic_card_play_state_diff", {"source_card_play_seq": 1})])
+
+    result = validate_stage2_events_from_file(events)
+
+    assert result["ok"] is False
+    assert any("diagnostic card-play state diff missing payload fields" in error for error in result["errors"])

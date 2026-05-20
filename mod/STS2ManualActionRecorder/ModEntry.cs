@@ -29,7 +29,9 @@ public partial class ModEntry : Node
                     {
                         "NEndTurnButton.CallReleaseLogic",
                         "NEndTurnButton.SecretEndTurnLogicViaFtue",
-                        "CombatManager.AfterAllPlayersReadyToEndTurn"
+                        "CombatManager.AfterAllPlayersReadyToEndTurn",
+                        "Hook.BeforeCardPlayed",
+                        "Hook.AfterCardPlayed"
                     },
                     ["output_directory"] = session.RunDirectory
                 });

@@ -1,6 +1,7 @@
 using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 
 namespace STS2ManualActionRecorder.Integration;
@@ -13,6 +14,7 @@ internal static class HarmonyBootstrap
     {
         Harmony harmony = new(HarmonyId);
         PatchEndTurnDiagnostics(harmony);
+        PatchCardPlayDiagnostics(harmony);
         return HarmonyId;
     }
 
@@ -40,6 +42,25 @@ internal static class HarmonyBootstrap
             harmony.Patch(
                 afterAllPlayersReadyToEndTurn,
                 prefix: new HarmonyMethod(typeof(EndTurnDiagnosticHooks).GetMethod(nameof(EndTurnDiagnosticHooks.BeforeAfterAllPlayersReadyToEndTurn), BindingFlags.Static | BindingFlags.Public)!));
+        }
+    }
+
+    private static void PatchCardPlayDiagnostics(Harmony harmony)
+    {
+        MethodInfo? beforeCardPlayed = AccessTools.Method(typeof(Hook), nameof(Hook.BeforeCardPlayed));
+        if (beforeCardPlayed != null)
+        {
+            harmony.Patch(
+                beforeCardPlayed,
+                prefix: new HarmonyMethod(typeof(CardPlayDiagnosticHooks).GetMethod(nameof(CardPlayDiagnosticHooks.BeforeBeforeCardPlayed), BindingFlags.Static | BindingFlags.Public)!));
+        }
+
+        MethodInfo? afterCardPlayed = AccessTools.Method(typeof(Hook), nameof(Hook.AfterCardPlayed));
+        if (afterCardPlayed != null)
+        {
+            harmony.Patch(
+                afterCardPlayed,
+                prefix: new HarmonyMethod(typeof(CardPlayDiagnosticHooks).GetMethod(nameof(CardPlayDiagnosticHooks.BeforeAfterCardPlayed), BindingFlags.Static | BindingFlags.Public)!));
         }
     }
 }

@@ -1,6 +1,6 @@
 # Stage 2 Event Schema
 
-Stage 2 keeps the Stage 1 envelope and adds action payload conventions.
+Stage 2 keeps the Stage 1 envelope and adds action payload conventions. Field meanings are maintained in [RECORDING_FIELD_REFERENCE_ZH.md](RECORDING_FIELD_REFERENCE_ZH.md) and [RECORDING_FIELD_REFERENCE.md](RECORDING_FIELD_REFERENCE.md).
 
 ## Envelope
 
@@ -55,7 +55,97 @@ The current 2B diagnostic bridge emits a non-final diagnostic event before the r
 }
 ```
 
-These events are for smoke testing and source confirmation only; they are not verified gameplay events.
+## Diagnostic card-play event
+
+The current card-play diagnostic bridge emits a non-final event from the core hook dispatcher:
+
+- `diagnostic_card_after_played`
+
+Payload shape:
+
+```json
+{
+  "hook": "Hook.AfterCardPlayed",
+  "card_id": "bash",
+  "card_model_id": "Bash",
+  "card_title": "Bash",
+  "card_target_type": "AnyEnemy",
+  "player_net_id": 1,
+  "target_present": true,
+  "target_combat_id": 2,
+  "target_index": 1,
+  "target_log_name": "Cultist",
+  "result_pile": "Discard",
+  "is_auto_play": false,
+  "play_index": 0,
+  "play_count": 1,
+  "is_first_in_series": true,
+  "is_last_in_series": true,
+  "energy_spent": 2,
+  "stars_spent": 0
+}
+```
+
+This event is for smoke testing successful card-play hook semantics only; it is not a verified `card_played` gameplay event.
+
+It is also not sufficient for full combat replay. Across the v0.105.1 card snapshot, all character pools contain cards that mutate other hand cards, draw/discard/exhaust piles, generate temporary or status cards, transform/upgrade cards, auto-play other cards, trigger delayed effects, or change creature/orb/summon state. Those effects require state snapshots and diffs.
+
+## Diagnostic card-play state diff event
+
+The next card-play diagnostic should emit a separate non-final event around `Hook.BeforeCardPlayed` / `Hook.AfterCardPlayed`:
+
+- `diagnostic_card_play_state_diff`
+
+Current capture-window limitation: `state_before` is captured after validation/resource spend and after the played card entered the Play pile; `state_after` is captured at the `Hook.AfterCardPlayed` prefix, after card effects but before `AfterCardPlayed` listeners and before final result-pile cleanup. The played card's intended final destination is represented by `card_play.result_pile` until a later cleanup hook is verified.
+
+Minimum payload shape:
+
+```json
+{
+  "source_card_play_seq": 42,
+  "card_id": "ACROBATICS",
+  "player_net_id": 1,
+  "is_auto_play": false,
+  "state_before": {
+    "players": [
+      {
+        "player_net_id": 1,
+        "hand": [],
+        "draw_pile": [],
+        "discard_pile": [],
+        "exhaust_pile": []
+      }
+    ],
+    "creatures": []
+  },
+  "state_after": {
+    "players": [],
+    "creatures": []
+  },
+  "diff": {
+    "cards_drawn": [],
+    "cards_discarded": [],
+    "cards_exhausted": [],
+    "cards_moved": [],
+    "cards_created": [],
+    "cards_transformed": [],
+    "cards_upgraded": [],
+    "draw_pile_order_changed": false,
+    "hp_changes": [],
+    "block_changes": [],
+    "power_changes": [],
+    "orb_changes": [],
+    "summon_changes": [],
+    "choices": [],
+    "random_results": [],
+    "auto_play_children": []
+  }
+}
+```
+
+Card entries in snapshots should include at least a recorder-assigned card instance id, card id/model id/title, owner net id, zone, zone index, cost if available, upgraded state if available, temporary/modifier flags if available.
+
+These diagnostic events are for smoke testing and source confirmation only; they are not verified gameplay events.
 
 ## Future Stage 2 event types
 
